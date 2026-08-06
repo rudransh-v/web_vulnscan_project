@@ -1,6 +1,6 @@
 from checks.headers import check_security_headers
 
-target = "http://localhost"
+target = "http://localhost/DVWA/"
 
 results = check_security_headers(target)
 
