@@ -10,8 +10,5 @@ A lightweight, open-source web vulnerability scanner targeting the OWASP Top 10.
 - XSS vulnerability detection
 - Web-based dashboard for viewing results
 
-## Setup
-(You'll fill this in on Day 10 with proper instructions)
-
 ## Status
 Under development - Days 1-10 build in progress.
