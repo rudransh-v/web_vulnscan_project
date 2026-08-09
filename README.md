@@ -175,10 +175,6 @@ Phase 3 - PostgreSQL backend, Kubernetes deployment, multi-target scanning, user
 - Outdated JavaScript detection uses a limited local vulnerability/version database.
 - SQLi and XSS detection use heuristic response analysis and may produce false positives or false negatives.
 
-## License
-
-MIT License - Free for educational and personal use.
-
 ## Author
 
 Rudransh Vyas - 3rd Year Electronics & Communication Engineering Student, Cybersecurity Focus
