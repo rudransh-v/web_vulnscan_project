@@ -1,6 +1,6 @@
 # VulnScan - Lightweight Web Vulnerability Scanner
 
-Enterprise SIEM tools like Splunk and Nessus cost thousands per year. VulnScan is a lightweight, open-source web vulnerability scanner that detects security issues in real time, classifies severity, and generates professional reports — the core SOC workflow, built from scratch in Python.
+VulnScan is a lightweight, open-source web vulnerability scanner that detects security issues in real time, classifies severity, and generates professional reports — the core SOC workflow, built from scratch in Python.
 
 ## Problem Statement
 
@@ -166,6 +166,14 @@ Security Lessons - Defense-in-depth with multiple security layers, severity scor
 Phase 2 - Authenticated scanning, stored XSS detection, TLS/SSL certificate validation, CVE database integration, scan scheduling, email/Slack notifications
 
 Phase 3 - PostgreSQL backend, Kubernetes deployment, multi-target scanning, user authentication, compliance reporting (OWASP, PCI-DSS), API-driven architecture
+
+## Limitations
+
+- Primarily designed for server-rendered web applications.
+- JavaScript-rendered SPAs are not fully crawled because the scanner does not execute browser-side JavaScript.
+- Authenticated scanning currently relies on application-specific session handling.
+- Outdated JavaScript detection uses a limited local vulnerability/version database.
+- SQLi and XSS detection use heuristic response analysis and may produce false positives or false negatives.
 
 ## License
 
