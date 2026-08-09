@@ -1,66 +1,56 @@
-\# VulnScan - Lightweight Web Vulnerability Scanner
+\# VulnScan
 
 
 
-Enterprise vulnerability scanning tools cost thousands per year. VulnScan is a lightweight, open-source web vulnerability scanner built in Python.
+Lightweight web vulnerability scanner built in Python.
 
 
 
-\## What It Does
+\## Features
 
 
 
-\- Crawls websites to find pages and forms
+\- Web crawler for page discovery
 
-\- Checks for security headers
+\- Security headers checker
 
-\- Scans for exposed sensitive files
+\- Exposed files scanner
 
-\- Detects outdated JavaScript libraries
+\- Outdated JavaScript detector
 
-\- Tests for SQL injection vulnerabilities
+\- SQL injection tester
 
-\- Detects XSS vulnerabilities
+\- XSS vulnerability detector
 
-\- Stores findings in SQLite database
+\- SQLite database storage
 
-\- Generates reports and PDF exports
+\- Professional web dashboard
 
-\- Professional web dashboard with charts and filtering
-
-
-
-\## Setup
+\- PDF report generation
 
 
 
-Install Python 3.10+, then:
+\## Quick Start
 
 
 
-1\. Clone: git clone https://github.com/rudransh-v/web\_vulnscan\_project.git
-
-2\. Create venv: python -m venv venv
-
-3\. Activate: venv\\Scripts\\Activate.ps1
-
-4\. Install: pip install requests beautifulsoup4 flask reportlab
+Clone the repo, create a Python virtual environment, install dependencies with pip, and run:
 
 
 
-\## Usage
+python cli.py --target http://localhost/DVWA/
 
 
 
-Run scanner: python cli.py --target http://localhost/DVWA/
+For the dashboard:
 
 
 
-View dashboard: python dashboard/app.py
+python dashboard/app.py
 
 
 
-Then open http://localhost:5000
+Then visit http://localhost:5000
 
 
 
@@ -68,35 +58,19 @@ Then open http://localhost:5000
 
 
 
-Complete Dashboard
+Dashboard Overview
 
 
 
-!\[Dashboard](06\_dashboard\_complete\_view.png)
+!\[06\_dashboard\_complete\_view.png](06\_dashboard\_complete\_view.png)
 
 
 
-Filtered Results
+Filtered View
 
 
 
-!\[Filtered](03\_dashboard\_filtered\_high.png)
-
-
-
-Finding Details
-
-
-
-!\[Details](04\_dashboard\_modal\_details.png)
-
-
-
-PDF Report
-
-
-
-!\[Report](05\_dashboard\_pdf\_export.png)
+!\[03\_dashboard\_filtered\_high.png](03\_dashboard\_filtered\_high.png)
 
 
 
@@ -104,9 +78,5 @@ PDF Report
 
 
 
-Rudransh V - 3rd Year CS Student
-
-
-
-GitHub: rudransh-v
+Rudransh V
 
