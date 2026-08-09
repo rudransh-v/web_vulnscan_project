@@ -101,27 +101,27 @@ Total findings: 7-11 depending on DVWA configuration
 
 Dashboard Overview
 
-![06_dashboard_complete_view.png](06_dashboard_complete_view.png)
+<img src="06_dashboard_complete_view.png" width="600" alt="Dashboard Overview">
 
-Complete dashboard view showing risk score gauge (39/100), charts showing severity distribution and findings by type, and complete findings table with all vulnerabilities.
+Complete dashboard view showing risk score gauge, charts, and findings table.
 
 Dashboard Filtered Results
 
-![03_dashboard_filtered_high.png](03_dashboard_filtered_high.png)
+<img src="03_dashboard_filtered_high.png" width="600" alt="Filtered Results">
 
-Interactive filtering: click severity cards to show only findings matching that level. Here showing only the High severity /.git/config exposure.
+Interactive filtering by severity level.
 
 Finding Details Modal
 
-![04_dashboard_modal_details.png](04_dashboard_modal_details.png)
+<img src="04_dashboard_modal_details.png" width="600" alt="Finding Details">
 
-Click any finding to see full details: severity badge, vulnerability type, target URL, description, remediation recommendation, and timestamp.
+Click any finding to see full details.
 
 PDF Export
 
-![05_dashboard_pdf_export.png](05_dashboard_pdf_export.png)
+<img src="05_dashboard_pdf_export.png" width="600" alt="PDF Export">
 
-Generate professional PDF reports containing summary statistics and all detailed findings with recommendations.
+Professional PDF report generation.
 
 ## What This Project Demonstrates
 
