@@ -99,25 +99,25 @@ Total findings: 7-11 depending on DVWA configuration
 
 ## Evidence Screenshots
 
-Dashboard Overview
+#### Dashboard Overview
 
 <img src="06_dashboard_complete_view.png" width="600" alt="Dashboard Overview">
 
 Complete dashboard view showing risk score gauge, charts, and findings table.
 
-Dashboard Filtered Results
+#### Dashboard Filtered Results
 
 <img src="03_dashboard_filtered_high.png" width="600" alt="Filtered Results">
 
 Interactive filtering by severity level.
 
-Finding Details Modal
+#### Finding Details Modal
 
 <img src="04_dashboard_modal_details.png" width="600" alt="Finding Details">
 
 Click any finding to see full details.
 
-PDF Export
+##### PDF Export
 
 <img src="05_dashboard_pdf_export.png" width="600" alt="PDF Export">
 
