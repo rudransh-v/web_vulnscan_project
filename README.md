@@ -562,7 +562,9 @@ When run against DVWA (Low security level), VulnScan typically detects:
 
 \### 1. Web Dashboard — Complete View
 
-!\[Dashboard Complete](06\_dashboard\_complete\_view.png)
+!\[Dashboard Complete]
+
+(06\_dashboard\_complete\_view.png)
 
 Risk score gauge (39/100), charts showing severity distribution and findings by type, complete findings table with all vulnerabilities.
 
@@ -570,7 +572,9 @@ Risk score gauge (39/100), charts showing severity distribution and findings by 
 
 \### 2. Dashboard — Filtered Results (High Severity Only)
 
-!\[Dashboard Filtered](03\_dashboard\_filtered\_high.png)
+!\[Dashboard Filtered]
+
+(03\_dashboard\_filtered\_high.png)
 
 Interactive filtering: click severity cards to show only findings matching that level. Here showing only the High severity /.git/config exposure.
 
@@ -578,7 +582,9 @@ Interactive filtering: click severity cards to show only findings matching that 
 
 \### 3. Finding Details Modal
 
-!\[Finding Details](04\_dashboard\_modal\_details.png)
+!\[Finding Details]
+
+(04\_dashboard\_modal\_details.png)
 
 Click any finding to see full details: severity badge, vulnerability type, target URL, description, remediation recommendation, and timestamp.
 
@@ -586,7 +592,9 @@ Click any finding to see full details: severity badge, vulnerability type, targe
 
 \### 4. PDF Export
 
-!\[PDF Report](05\_dashboard\_pdf\_export.png)
+!\[PDF Report]
+
+(05\_dashboard\_pdf\_export.png)
 
 Generate professional PDF reports containing summary statistics and all detailed findings with recommendations.
 
