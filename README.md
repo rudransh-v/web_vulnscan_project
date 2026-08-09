@@ -131,7 +131,7 @@ Software Engineering - Full-stack application development (backend + frontend), 
 
 DevOps and Deployment - Version control (Git/GitHub), Python virtual environments, dependency management (pip), documentation and README best practices
 
-Real-World Skills - Working with third-party libraries (requests, BeautifulSoup, Flask), debugging and troubleshooting, testing and validation, performance optimization (rate-limiting, timeouts)
+Real-World Skills - Working with third-party libraries (requests, BeautifulSoup, Flask), debugging and troubleshooting, testing and validation, performance optimization (timeout and rate-limit handling)
 
 ## Technology Stack
 
@@ -173,6 +173,6 @@ MIT License - Free for educational and personal use.
 
 ## Author
 
-Rudransh V - 3rd Year Computer Science Student, Cybersecurity Focus
+Rudransh Vyas - 3rd Year Electronics & Communication Engineering Student, Cybersecurity Focus
 
 GitHub: https://github.com/rudransh-v
