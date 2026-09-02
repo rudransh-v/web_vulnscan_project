@@ -1,182 +1,210 @@
-# VulnScan - Lightweight Web Vulnerability Scanner
+# VulnScan — Lightweight Web Vulnerability Scanner
 
-VulnScan is a lightweight, open-source web vulnerability scanner that detects security issues in real time, classifies severity, and generates professional reports — the core SOC workflow, built from scratch in Python.
+A Python-based web vulnerability scanner that detects security issues, classifies severity, and generates reports. Built from scratch as an educational/portfolio project targeting OWASP Top 10 categories.
+
+## Table of Contents
+- [Problem Statement](#problem-statement)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Setup & Installation](#setup--installation)
+- [Usage](#usage)
+- [Dashboard Features](#dashboard-features)
+- [Example Scan Results](#example-scan-results)
+- [Screenshots](#screenshots)
+- [What This Demonstrates](#what-this-demonstrates)
+- [Tech Stack](#tech-stack)
+- [Project Timeline](#project-timeline)
+- [Key Learnings](#key-learnings)
+- [Limitations](#limitations)
+- [Future Enhancements](#future-enhancements)
+- [Author](#author)
+
+---
 
 ## Problem Statement
 
-Web vulnerability scanning is critical but expensive. Professional tools are overkill for small businesses and startups. VulnScan addresses this gap by providing automated vulnerability detection targeting OWASP Top 10 categories, professional reporting with severity classification and remediation guidance, and a web-based dashboard for visualization.
+- Professional vulnerability scanners (Nessus, Burp Suite Pro) are expensive and overkill for learning/small-scale use
+- VulnScan is a lightweight, open-source alternative built to understand OWASP Top 10 detection mechanics
+- Provides automated detection, severity classification, and remediation guidance in a single pipeline
+
+---
 
 ## Features
 
-Core Scanning Modules
+**Core Scanning Modules**
+- Web crawler — BFS-based, discovers pages and forms within scope
+- Security headers checker — flags missing CSP, HSTS, X-Frame-Options, X-Content-Type-Options
+- Exposed files scanner — checks for publicly accessible sensitive paths (`.git`, `.env`, `/admin`)
+- Outdated JS library detector — flags known-vulnerable JS library versions
+- XSS detector — submits test payloads, checks for reflected XSS (runs in CLI pipeline)
+- SQL injection prober — error-based and boolean-based SQLi testing (standalone module, not yet wired into the automated CLI pipeline — see [Limitations](#limitations))
 
-Web Crawler - Discovers pages and forms via BFS, respects scope boundaries
-Security Headers Checker - Detects missing CSP, HSTS, X-Frame-Options, X-Content-Type-Options
-Exposed Files Scanner - Identifies publicly accessible sensitive paths (/.git, /.env, /admin)
-Outdated JS Library Detector - Flags known-vulnerable JavaScript library versions
-SQL Injection Prober - Tests form fields with SQLi payloads (error-based, boolean-based)
-XSS Vulnerability Detector - Submits test payloads, detects reflected XSS
+**Storage & Reporting**
+- SQLite database — persistent findings, queryable by severity/type
+- Markdown report generator
+- PDF export
 
-Storage and Reporting
+**Web Dashboard**
+- Risk score gauge (0–100, weighted by severity)
+- Severity distribution chart (donut) + findings-by-type chart (bar)
+- Filterable, sortable findings table
+- Click-through detail modals
+- Dark mode UI
 
-SQLite Database - Persistent findings storage, queryable by severity and type
-CLI Report Generator - Generates professional Markdown reports
-PDF Export - Download findings as formatted PDF
-
-Web Dashboard
-
-Risk Score Gauge - Visual 0-100 risk assessment
-Real-time Charts - Severity distribution (donut), findings by type (bar)
-Interactive Findings Table - Sortable, filterable by severity
-Detail Modals - Click any finding to see full description and recommendations
-Dark Mode UI - Professional, polished aesthetic
-Quick Stats - Most common issue, highest severity, scan duration
+---
 
 ## Architecture
 
-Detection Engine (checks/ folder) discovers pages and forms, then runs security checks. Findings are stored in SQLite database. CLI orchestrator ties everything together, and Flask web server powers the dashboard.
+```
+Crawler (discovers pages/forms)
+   → Check modules (headers, files, JS, XSS)
+   → SQLite database
+   → CLI report + Flask dashboard
+```
 
-## Setup and Installation
+---
 
-Prerequisites: Python 3.10+, Node.js 18+ (optional), 8GB RAM minimum
+## Setup & Installation
 
-Step 1 - Clone Repository
+**Prerequisites:** Python 3.10+, 8GB RAM minimum
 
+```bash
+# 1. Clone
 git clone https://github.com/rudransh-v/web_vulnscan_project.git
 cd web_vulnscan_project/vulnscan
 
-Step 2 - Create Virtual Environment
-
+# 2. Virtual environment
 python -m venv venv
 venv\Scripts\Activate.ps1
 
-Step 3 - Install Dependencies
-
+# 3. Install dependencies
 pip install requests beautifulsoup4 flask reportlab
 
-Step 4 - Set Up Target (DVWA)
+# 4. Set up target (DVWA via XAMPP)
+# - Install XAMPP, start Apache + MySQL
+# - Clone DVWA into C:\xampp\htdocs\DVWA
+# - Set security level to Low at http://localhost/DVWA/security.php
+```
 
-Install XAMPP from apachefriends.org. Start Apache and MySQL. Clone DVWA into C:\xampp\htdocs\DVWA. Set security level to Low at http://localhost/DVWA/security.php
+---
 
 ## Usage
 
-Run Full Scanner Pipeline
-
+```bash
+# Run full scan
 python cli.py --target http://localhost/DVWA/
 
-This will crawl the target, run all security checks, store findings in SQLite, and generate vulnscan_report.md
-
-View CLI Report
-
+# View report
 cat vulnscan_report.md
 
-Launch Web Dashboard
-
+# Launch dashboard
 python dashboard/app.py
+# → open http://localhost:5000
+```
 
-Then open browser to http://localhost:5000
+---
 
 ## Dashboard Features
 
-Summary Metrics - Risk score gauge, quick stats, severity cards
-Interactive Charts - Severity distribution (donut chart), findings by type (bar chart)
-Findings Table - Sortable columns, filter by severity, click for details
-Filter by Severity - Click severity cards or filter buttons to narrow results
-Detail Modal - Click Details button to see full finding information
-PDF Export - Download findings as formatted PDF report
+- Risk score gauge + quick stats (most common issue, highest severity, total findings)
+- Interactive severity/type charts
+- Click severity cards or filter buttons to narrow the findings table
+- "Details" button opens a modal with full finding info
+- PDF export button
+
+---
 
 ## Example Scan Results
 
-When run against DVWA (Low security level), VulnScan typically detects:
+Against DVWA (Low security):
 
-Missing Security Headers (4) - CSP, HSTS, X-Frame-Options, X-Content-Type-Options
-Exposed Files (3) - /.git/config, /robots.txt, /.git/
-Outdated JS Libraries (0-2) - Old jQuery/Bootstrap versions
-SQL Injection (0-1) - Login form vulnerable to SQLi
-XSS Vulnerabilities (0-1) - Form fields reflect unescaped input
+| Check | Typical Findings |
+|---|---|
+| Missing security headers | 4 |
+| Exposed files | 3 (`.git/config`, `robots.txt`, `.git/`) |
+| Outdated JS libraries | 0–2 |
+| Reflected XSS | 0–1 |
 
-Total findings: 7-11 depending on DVWA configuration
+**Total (CLI pipeline):** ~7 findings
 
-## Evidence Screenshots
+---
 
-#### Dashboard Overview
+## Screenshots
 
 <img src="06_dashboard_complete_view.png" width="600" alt="Dashboard Overview">
-
-Complete dashboard view showing risk score gauge, charts, and findings table.
-
-#### Dashboard Filtered Results
-
 <img src="03_dashboard_filtered_high.png" width="600" alt="Filtered Results">
-
-Interactive filtering by severity level.
-
-#### Finding Details Modal
-
-<img src="04_dashboard_modal_details.png" width="600" alt="Finding Details">
-
-Click any finding to see full details.
-
-##### PDF Export
-
+<img src="04_dashboard_modal_details.png" width="600" alt="Finding Details Modal">
 <img src="05_dashboard_pdf_export.png" width="600" alt="PDF Export">
 
-Professional PDF report generation.
+---
 
-## What This Project Demonstrates
+## What This Demonstrates
 
-Security Knowledge - Web application vulnerability types (OWASP Top 10), attack signatures and payloads, risk assessment and severity classification, incident response workflow
+- **Security knowledge** — OWASP Top 10 vulnerability types, severity classification, remediation guidance
+- **Software engineering** — full-stack build (Python backend + Flask/JS frontend), modular scanner architecture, SQLite schema design
+- **DevOps** — Git/GitHub workflow, virtual environments, dependency management
+- **Practical skills** — debugging real environment issues, working with third-party libraries, rate-limiting/timeout handling
 
-Software Engineering - Full-stack application development (backend + frontend), modular architecture with reusable scanner modules, database design and querying (SQLite), RESTful API design (Flask endpoints), web UI/UX (professional dark-mode dashboard)
+---
 
-DevOps and Deployment - Version control (Git/GitHub), Python virtual environments, dependency management (pip), documentation and README best practices
+## Tech Stack
 
-Real-World Skills - Working with third-party libraries (requests, BeautifulSoup, Flask), debugging and troubleshooting, testing and validation, performance optimization (timeout and rate-limit handling)
+| Layer | Tools |
+|---|---|
+| Backend | Python 3.14 |
+| Web server | Flask |
+| Database | SQLite |
+| Frontend | HTML / CSS / JS |
+| Charts | Chart.js |
+| Reports | ReportLab |
+| Libraries | requests, BeautifulSoup4 |
 
-## Technology Stack
-
-Backend - Python 3.14
-Web Server - Flask
-Database - SQLite
-Frontend - HTML/CSS/JavaScript
-Charts - Chart.js
-Reports - ReportLab
-Libraries - requests, BeautifulSoup4
+---
 
 ## Project Timeline
 
-Days 1-2 - Core crawler + headers checker (Complete)
-Days 3-4 - Exposed files + outdated JS (Complete)
-Days 5-6 - SQLi + XSS probers (Complete)
-Day 7 - Database + CLI pipeline (Complete)
-Day 8 - Web dashboard + charts (Complete)
-Day 9 - End-to-end testing + evidence (Complete)
-Day 10 - Documentation + final push (Complete)
+| Days | Work | Status |
+|---|---|---|
+| 1–2 | Crawler + headers checker | ✅ |
+| 3–4 | Exposed files + outdated JS | ✅ |
+| 5–6 | SQLi + XSS probers | ✅ |
+| 7 | Database + CLI pipeline | ✅ |
+| 8 | Web dashboard | ✅ |
+| 9 | End-to-end testing + evidence | ✅ |
+| 10 | Documentation | ✅ |
+
+---
 
 ## Key Learnings
 
-Technical Insights - HTTP response analysis for vulnerability detection, web crawling complexity (BFS, scope control, timeout handling), security best practices (input validation, output encoding, CSRF token handling), database design and querying, web UI frameworks (Flask routing, Jinja2 templating, Chart.js integration)
+- HTTP response analysis for vulnerability detection
+- Web crawling scope control (BFS, depth limits, timeouts)
+- CSRF token handling, input validation, output encoding concepts
+- SQLite schema design + querying
+- Flask routing, Jinja2 templating, Chart.js integration
 
-Soft Skills - Project planning and 10-day sprint structure, documentation writing (README, commit messages, code comments), user-centered design for dashboard usability, problem-solving for environment issues (PATH, file locks, imports)
-
-Security Lessons - Defense-in-depth with multiple security layers, severity scoring for risk prioritization, automation for scaling pentesting
-
-## Future Enhancements
-
-Phase 2 - Authenticated scanning, stored XSS detection, TLS/SSL certificate validation, CVE database integration, scan scheduling, email/Slack notifications
-
-Phase 3 - PostgreSQL backend, Kubernetes deployment, multi-target scanning, user authentication, compliance reporting (OWASP, PCI-DSS), API-driven architecture
+---
 
 ## Limitations
 
-- Primarily designed for server-rendered web applications.
-- JavaScript-rendered SPAs are not fully crawled because the scanner does not execute browser-side JavaScript.
-- Authenticated scanning currently relies on application-specific session handling.
-- Outdated JavaScript detection uses a limited local vulnerability/version database.
-- SQLi and XSS detection use heuristic response analysis and may produce false positives or false negatives.
+- SQLi module exists but requires an authenticated session (`dvwa_auth.py`) not yet wired into the automated CLI pipeline — runs standalone only
+- XSS check only tests unauthenticated/public pages
+- No support for JavaScript-rendered SPAs (requests + BeautifulSoup only see static HTML)
+- Outdated JS library list is small and manually maintained (5 libraries, no live CVE feed)
+- Risk score is a simple weighted sum, not CVSS-based
+- No authentication on the dashboard itself — local/demo use only
+
+---
+
+## Future Enhancements
+
+**Phase 2:** Authenticated scanning, stored XSS detection, TLS/SSL checks, CVE database integration, scheduling, notifications
+
+**Phase 3:** PostgreSQL backend, multi-target scanning, dashboard auth, compliance reporting (OWASP/PCI-DSS), API-driven architecture
+
+---
 
 ## Author
 
-Rudransh Vyas - 3rd Year Electronics & Communication Engineering Student, Cybersecurity Focus
-
-GitHub: https://github.com/rudransh-v
+**Rudransh Vyas** — 3rd Year ECE Student, Cybersecurity Focus
+GitHub: [github.com/rudransh-v](https://github.com/rudransh-v)
