@@ -17,7 +17,7 @@ def generate_markdown_report(db_path="vulnscan.db"):
     findings_by_severity = {severity: [] for severity in severity_order}
     
     for finding in findings:
-        severity = finding[4]  # severity column
+        severity = finding[3]  # severity column
         if severity in findings_by_severity:
             findings_by_severity[severity].append(finding)
     
