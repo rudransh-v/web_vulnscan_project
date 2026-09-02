@@ -3,6 +3,7 @@ from checks.crypto_checks import check_crypto_failures
 target = "http://localhost/DVWA/"
 
 # add temporarily to test_crypto_checks.py, before the findings check
+
 import requests
 resp = requests.get(target)
 print("Raw Set-Cookie header(s):")
