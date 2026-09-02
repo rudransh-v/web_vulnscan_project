@@ -1,6 +1,7 @@
 import requests
 
-def check_error_handling(url, forms):
+def check_error_handling(url, forms, session=None):
+    requester = session if session else requests
     error_signatures = [
         "Warning:", "Fatal error:", "Notice:", "Deprecated:",
         "mysql_fetch", "SQLSTATE", "ODBC Driver",
@@ -25,9 +26,9 @@ def check_error_handling(url, forms):
                 continue
             try:
                 if method == "post":
-                    resp = requests.post(form_url, data=data, timeout=5)
+                    resp = requester.post(form_url, data=data, timeout=5)
                 else:
-                    resp = requests.get(form_url, params=data, timeout=5)
+                    resp = requester.get(form_url, params=data, timeout=5)
             except requests.RequestException:
                 continue
 
@@ -42,6 +43,7 @@ def check_error_handling(url, forms):
                         "description": f"Malformed input triggered a verbose error containing '{sig}'.",
                         "recommendation": "Disable verbose error/debug output in production; use generic error pages."
                     })
-                    break  # one finding per payload is enough
+                    break
 
     return findings
+
