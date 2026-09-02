@@ -1,10 +1,10 @@
 # VulnScan Report
 
-**Generated:** 2026-09-02 08:25:44
+**Generated:** 2026-09-02 10:05:07
 
 ## Summary
 
-- **Total Findings:** 7
+- **Total Findings:** 16
 - **Critical:** 0
 - **High:** 0
 - **Medium:** 0
