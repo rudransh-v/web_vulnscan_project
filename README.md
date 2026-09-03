@@ -1,30 +1,32 @@
-# VulnScan — Lightweight Web Vulnerability Scanner
+# VulnScan — Web Vulnerability Scanner
 
-A Python-based web vulnerability scanner that detects security issues, classifies severity, and generates reports. Built from scratch as an educational/portfolio project targeting OWASP Top 10 categories.
+A Python-based web vulnerability scanner with authenticated scanning support — detects security issues, classifies severity, and generates reports. Built as an educational/portfolio project covering 6 of 10 OWASP Top 10:2025 categories.
 
-## Table of Contents
-- [Problem Statement](#problem-statement)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Setup & Installation](#setup--installation)
-- [Usage](#usage)
-- [Dashboard Features](#dashboard-features)
-- [Example Scan Results](#example-scan-results)
-- [Screenshots](#screenshots)
-- [What This Demonstrates](#what-this-demonstrates)
-- [Tech Stack](#tech-stack)
-- [Project Timeline](#project-timeline)
-- [Key Learnings](#key-learnings)
-- [Limitations](#limitations)
-- [Future Enhancements](#future-enhancements)
-- [Author](#author)
+<p>
+<a href="#problem-statement"><img src="https://img.shields.io/badge/-Problem_Statement-10b981?style=for-the-badge"></a>
+<a href="#features"><img src="https://img.shields.io/badge/-Features-10b981?style=for-the-badge"></a>
+<a href="#architecture"><img src="https://img.shields.io/badge/-Architecture-10b981?style=for-the-badge"></a>
+<a href="#setup--installation"><img src="https://img.shields.io/badge/-Setup-10b981?style=for-the-badge"></a>
+</p>
+<p>
+<a href="#usage"><img src="https://img.shields.io/badge/-Usage-3b82f6?style=for-the-badge"></a>
+<a href="#dashboard-features"><img src="https://img.shields.io/badge/-Dashboard-3b82f6?style=for-the-badge"></a>
+<a href="#example-scan-results"><img src="https://img.shields.io/badge/-Results-3b82f6?style=for-the-badge"></a>
+<a href="#screenshots"><img src="https://img.shields.io/badge/-Screenshots-3b82f6?style=for-the-badge"></a>
+</p>
+<p>
+<a href="#owasp-top-10-coverage"><img src="https://img.shields.io/badge/-OWASP_Coverage-f97316?style=for-the-badge"></a>
+<a href="#tech-stack"><img src="https://img.shields.io/badge/-Tech_Stack-f97316?style=for-the-badge"></a>
+<a href="#limitations"><img src="https://img.shields.io/badge/-Limitations-eab308?style=for-the-badge"></a>
+<a href="#future-enhancements"><img src="https://img.shields.io/badge/-Roadmap-eab308?style=for-the-badge"></a>
+</p>
 
 ---
 
 ## Problem Statement
 
 - Professional vulnerability scanners (Nessus, Burp Suite Pro) are expensive and overkill for learning/small-scale use
-- VulnScan is a lightweight, open-source alternative built to understand OWASP Top 10 detection mechanics
+- VulnScan is a lightweight, open-source alternative built to understand OWASP Top 10 detection mechanics — including authenticated attack surfaces, not just public pages
 - Provides automated detection, severity classification, and remediation guidance in a single pipeline
 
 ---
@@ -36,8 +38,15 @@ A Python-based web vulnerability scanner that detects security issues, classifie
 - Security headers checker — flags missing CSP, HSTS, X-Frame-Options, X-Content-Type-Options
 - Exposed files scanner — checks for publicly accessible sensitive paths (`.git`, `.env`, `/admin`)
 - Outdated JS library detector — flags known-vulnerable JS library versions
-- XSS detector — submits test payloads, checks for reflected XSS (runs in CLI pipeline)
-- SQL injection prober — error-based and boolean-based SQLi testing (standalone module, not yet wired into the automated CLI pipeline — see [Limitations](#limitations))
+- SQL injection prober — error-based and boolean-based detection, runs against authenticated pages
+- Reflected XSS detector — tests authenticated form fields for unsanitized reflection
+- Cryptographic/cookie checker — HTTPS enforcement, missing `Secure`/`HttpOnly`/`SameSite` cookie flags
+- Verbose error disclosure checker — sends malformed input, detects leaked stack traces/SQL errors
+- Authentication checker — missing login rate limiting, missing CSRF tokens on state-changing forms
+
+**Authenticated Scanning**
+- Automatically logs into DVWA and scans real vulnerable pages (not just the public login page)
+- Session-aware: SQLi, XSS, error disclosure, and cookie checks all run against the authenticated attack surface
 
 **Storage & Reporting**
 - SQLite database — persistent findings, queryable by severity/type
@@ -57,7 +66,9 @@ A Python-based web vulnerability scanner that detects security issues, classifie
 
 ```
 Crawler (discovers pages/forms)
-   → Check modules (headers, files, JS, XSS)
+   → Unauthenticated checks (headers, files, JS, CSRF, rate limiting)
+   → Authenticated session (auto-login)
+   → Authenticated checks (SQLi, XSS, error disclosure, cookies)
    → SQLite database
    → CLI report + Flask dashboard
 ```
@@ -91,7 +102,7 @@ pip install requests beautifulsoup4 flask reportlab
 ## Usage
 
 ```bash
-# Run full scan
+# Run full scan (unauthenticated + authenticated checks)
 python cli.py --target http://localhost/DVWA/
 
 # View report
@@ -116,34 +127,61 @@ python dashboard/app.py
 
 ## Example Scan Results
 
-Against DVWA (Low security):
+Against DVWA (Low security), full pipeline including authenticated checks:
 
-| Check | Typical Findings |
+| Check | Findings |
 |---|---|
 | Missing security headers | 4 |
-| Exposed files | 3 (`.git/config`, `robots.txt`, `.git/`) |
-| Outdated JS libraries | 0–2 |
-| Reflected XSS | 0–1 |
+| Exposed files | 3 |
+| Outdated JS libraries | 0 |
+| Missing CSRF protection | 0 |
+| Missing rate limiting | 1 |
+| Insecure cookie config | 2 |
+| Verbose error disclosure | 1 |
+| SQL injection | 3 |
+| Reflected XSS | 1 |
 
-**Total (CLI pipeline):** ~7 findings
+**Total:** 16 findings — 3 Critical, 3 High, 8 Medium, 2 Low
 
 ---
 
 ## Screenshots
 
-<img src="06_dashboard_complete_view.png" width="600" alt="Dashboard Overview">
-<img src="03_dashboard_filtered_high.png" width="600" alt="Filtered Results">
-<img src="04_dashboard_modal_details.png" width="600" alt="Finding Details Modal">
-<img src="05_dashboard_pdf_export.png" width="600" alt="PDF Export">
+<img src="01_cli_scan.png" width="600" alt="CLI Scan Output">
+<img src="06_dashboard_complete.png" width="600" alt="Dashboard Overview">
+<img src="02_dashboard_filtered_critical.png" width="600" alt="Filtered by Critical Severity">
+<img src="04_dashboard_modal.png" width="600" alt="Finding Details Modal">
+<img src="05_dashboard_pdf.png" width="600" alt="PDF Export">
+
+---
+
+## OWASP Top 10 Coverage
+
+Mapped to OWASP Top 10:2025.
+
+| Category | Status | Detection |
+|---|---|---|
+| A01 – Broken Access Control | ❌ Not covered | Needs app-specific IDOR logic, out of scope for black-box scanning |
+| A02 – Security Misconfiguration | ✅ Covered | Missing headers, exposed files/dirs |
+| A03 – Software Supply Chain Failures | ⚠️ Partial | Outdated JS libraries (small hardcoded list) |
+| A04 – Cryptographic Failures | ✅ Covered | HTTPS enforcement, cookie security flags |
+| A05 – Injection | ✅ Covered | SQL injection, reflected XSS |
+| A06 – Insecure Design | ❌ Not covered | Not black-box-detectable |
+| A07 – Authentication Failures | ✅ Covered | Missing rate limiting, missing CSRF tokens |
+| A08 – Software/Data Integrity Failures | ❌ Not covered | Needs code/build access |
+| A09 – Security Logging & Alerting Failures | ❌ Not covered | Needs infra access |
+| A10 – Mishandling of Exceptional Conditions | ✅ Covered | Verbose error/stack trace disclosure |
+
+**6 of 10 categories covered with genuine automated detection.** A01/A06/A08/A09 are deliberately excluded — they require code review or infrastructure access no black-box scanner (including commercial ones) fully automates either.
 
 ---
 
 ## What This Demonstrates
 
-- **Security knowledge** — OWASP Top 10 vulnerability types, severity classification, remediation guidance
+- **Security knowledge** — OWASP Top 10 vulnerability types, severity classification, remediation guidance, authenticated attack surface testing
 - **Software engineering** — full-stack build (Python backend + Flask/JS frontend), modular scanner architecture, SQLite schema design
 - **DevOps** — Git/GitHub workflow, virtual environments, dependency management
-- **Practical skills** — debugging real environment issues, working with third-party libraries, rate-limiting/timeout handling
+- **Practical skills** — session/cookie handling, CSRF token scraping, debugging real environment issues, rate-limiting/timeout handling
 
 ---
 
@@ -161,25 +199,11 @@ Against DVWA (Low security):
 
 ---
 
-## Project Timeline
-
-| Days | Work | Status |
-|---|---|---|
-| 1–2 | Crawler + headers checker | ✅ |
-| 3–4 | Exposed files + outdated JS | ✅ |
-| 5–6 | SQLi + XSS probers | ✅ |
-| 7 | Database + CLI pipeline | ✅ |
-| 8 | Web dashboard | ✅ |
-| 9 | End-to-end testing + evidence | ✅ |
-| 10 | Documentation | ✅ |
-
----
-
 ## Key Learnings
 
 - HTTP response analysis for vulnerability detection
 - Web crawling scope control (BFS, depth limits, timeouts)
-- CSRF token handling, input validation, output encoding concepts
+- Session/cookie handling, CSRF token scraping for authenticated scanning
 - SQLite schema design + querying
 - Flask routing, Jinja2 templating, Chart.js integration
 
@@ -187,20 +211,19 @@ Against DVWA (Low security):
 
 ## Limitations
 
-- SQLi module exists but requires an authenticated session (`dvwa_auth.py`) not yet wired into the automated CLI pipeline — runs standalone only
-- XSS check only tests unauthenticated/public pages
 - No support for JavaScript-rendered SPAs (requests + BeautifulSoup only see static HTML)
 - Outdated JS library list is small and manually maintained (5 libraries, no live CVE feed)
-- Risk score is a simple weighted sum, not CVSS-based
+- Risk score is a simple weighted sum, not CVSS-based (currently caps at 100/100 on heavily vulnerable targets like DVWA)
 - No authentication on the dashboard itself — local/demo use only
+- Authenticated scanning is DVWA-specific (`dvwa_auth.py` hardcodes DVWA's login flow) — not generalized to arbitrary targets
 
 ---
 
 ## Future Enhancements
 
-**Phase 2:** Authenticated scanning, stored XSS detection, TLS/SSL checks, CVE database integration, scheduling, notifications
+**Phase 2:** Stored XSS detection, TLS/SSL certificate checks, CVE database integration, scan scheduling, notifications
 
-**Phase 3:** PostgreSQL backend, multi-target scanning, dashboard auth, compliance reporting (OWASP/PCI-DSS), API-driven architecture
+**Phase 3:** Generalized authentication (beyond DVWA), PostgreSQL backend, multi-target scanning, dashboard auth, compliance reporting (OWASP/PCI-DSS), API-driven architecture
 
 ---
 
